@@ -6,8 +6,8 @@ set_time_limit(0);
 session_start();
 
 $filter = "";
-$filter .= isset($_GET['divisi']) && $_GET['divisi'] != "" ? " and divisi = '".$_GET['divisi']."'" : "";
-$filter .= isset($_GET['tahun']) && $_GET['tahun'] != "" ? " and tahun = '".$_GET['tahun']."'" : "";
+$filter .= isset($_GET['divisi']) && $_GET['divisi'] != "" ? " and a.divisi = '".$_GET['divisi']."'" : "";
+$filter .= isset($_GET['tahun']) && $_GET['tahun'] != "" ? " and a.tahun = '".$_GET['tahun']."'" : "";
 $filter .= " and b.[nama_karyawan] is not null";
 $group_by = " GROUP BY a.[kode_penilaian]
                 ,a.[nama]
@@ -16,7 +16,10 @@ $group_by = " GROUP BY a.[kode_penilaian]
                 ,b.[nama_karyawan]
                 ,b.[nik]
 				,b.[hasil]
-				,b.[arsip]";
+				,b.[arsip]
+                ,c.[jabatan]
+                ,c.[lama_kerja_th]
+                ,c.[lama_kerja_bln]";
 $order_by = " ORDER BY a.[divisi],b.[nama_karyawan],a.[tahun] ASC";
 ?>
 <script>
@@ -69,7 +72,9 @@ $order_by = " ORDER BY a.[divisi],b.[nama_karyawan],a.[tahun] ASC";
             <th style="vertical-align:middle; text-align:center;">Tahun</th>
             <th style="vertical-align:middle; text-align:center;">Nama</th>
             <th style="vertical-align:middle; text-align:center;">NIK</th>
-            <th style="vertical-align:middle; text-align:center;">Score</th>
+            <th style="vertical-align:middle; text-align:center;">Jabatan</th>
+            <th style="vertical-align:middle; text-align:center;">Masa Kerja</th>
+            <th style="vertical-align:middle; text-align:center;">Total Score</th>
             <th style="vertical-align:middle; text-align:center;">Validasi Atasan</th>
             <th style="vertical-align:middle; text-align:center; width:100px;">Act</th>
         </tr>
@@ -86,9 +91,14 @@ $order_by = " ORDER BY a.[divisi],b.[nama_karyawan],a.[tahun] ASC";
                 ,b.[nik]
 				,b.[hasil]
 				,b.[arsip]
+                ,c.[jabatan]
+                ,c.[lama_kerja_th]
+                ,c.[lama_kerja_bln]
                 FROM [db_hris].[dbo].[table_penilaian_karyawan] a
                 LEFT JOIN [db_hris].[dbo].[table_penilaian_karyawan_result] b
-                ON b.[id_penilaian] = a.id
+                    ON b.[id_penilaian] = a.id
+                LEFT JOIN [db_hris].[dbo].[table_karyawan] c
+                    ON b.nik = c.nik
                 WHERE 1=1";
         $sql .= $filter;
         $sql .= $group_by;
@@ -121,6 +131,12 @@ $order_by = " ORDER BY a.[divisi],b.[nama_karyawan],a.[tahun] ASC";
                 </td>
                 <td style="vertical-align:middle; text-align:center;">
                     <?php echo $row['nik']; ?>
+                </td>
+                <td style="vertical-align:middle; text-align:center;">
+                    <?php echo $row['jabatan']; ?>
+                </td>
+                <td style="vertical-align:middle; text-align:center;">
+                    <?php echo $row['lama_kerja_th'] . " tahun " . $row['lama_kerja_bln'] . " bulan"; ?>
                 </td>
                 <td style="vertical-align:middle; text-align:center;">
                     <?php echo format_rupiah($row['total_score']); ?>
