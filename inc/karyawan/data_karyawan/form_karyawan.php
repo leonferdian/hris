@@ -743,6 +743,9 @@ if ($_GET['act'] == "edit_karyawan" || $_GET['act'] == "detail_karyawan"):
 		where a.id = '" . $_GET['id'] . "'";
 	$stmt = $sqlsrv_hris->query($sql);
 	$row = $sqlsrv_hris->fetch_array($stmt);
+	echo '<input type="hidden" id="id" value="'.$row['id'].'">';
+else:
+	echo '<input type="hidden" id="id" value="">';
 endif;
 ?>
 <div class="main-content-inner">
@@ -1760,6 +1763,7 @@ endif;
     }
 
     function save_karyawan() {
+		var id = $("#id").val();
 		var nama_pt = $("#nama_pt").val();
 		var entity = $("#entity").val();
 		var depo = $("#depo").val();
@@ -1850,6 +1854,7 @@ endif;
 				traditional: true,
 				data: {
 					act: "save_karyawan",
+					id : id,
 					nama_pt : nama_pt,
 					entity : entity,
 					depo : depo,

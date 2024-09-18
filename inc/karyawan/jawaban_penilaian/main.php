@@ -13,7 +13,7 @@
                 <i class="ace-icon fa fa-home home-icon"></i>
                 <a href="?page=dashboard">Home</a>
             </li>
-            <li class="active">Koreksi Kinerja Karyawan</li>
+            <li class="active">Penilaian Kinerja Karyawan by Atasan</li>
         </ul>
     </div>
     <div class="page-content">
@@ -24,7 +24,7 @@
                 </a>
             </div>
             <h1>
-                Koreksi Kinerja Karyawan
+                Penilaian Kinerja Karyawan by Atasan
             </h1>
         </div>
         <div class="row">

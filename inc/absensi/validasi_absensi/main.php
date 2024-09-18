@@ -1,6 +1,71 @@
 <?php 
 $sqlsrv_db = DB::connection('sqlsrv_hris'); 
 $where_depo = $_SESSION['total_depo'] != 0 ? " WHERE depo in ".$_SESSION['akses_depo']."" : "";
+if($_GET['act'] == "validasi_hrd"):
+    $cek_task = $sqlsrv_db->query("SELECT
+                absensi.[depo]
+                ,absensi.[pin]
+                ,absensi.[nik]
+                ,absensi.[nama]
+                ,absensi.date_absen
+                ,kadep.username
+                ,val.[keterangan]
+                ,val.[lc_name]
+                ,val_hrd.[validasi_hrd]
+                ,val_hrd.[nama_validator]
+                ,val_hrd.[validate_date]
+            FROM [db_hris].[dbo].[table_absensi_log] absensi
+            LEFT JOIN [db_hris].[dbo].[table_depo_absensi] kadep
+            ON absensi.depo = kadep.kode_depo
+            LEFT JOIN (SELECT
+                a.*
+            ,b.leave_category AS lc_name
+            FROM [db_hris].[dbo].[table_absensi_validasi] a
+            LEFT JOIN [db_hris].[dbo].[table_absensi_leave_category] b
+                ON a.leave_category = b.id) val
+            ON absensi.depo = val.depo
+                AND absensi.pin = val.pin
+                AND absensi.nik = val.nik
+                AND absensi.date_absen = val.date_absen
+            LEFT JOIN [db_hris].[dbo].[table_absensi_validasi_hrd] val_hrd
+                ON absensi.depo = val_hrd.depo
+                AND absensi.nik = val_hrd.nik
+                AND absensi.pin = val_hrd.pin
+                AND val.date_absen = val_hrd.date_absen
+            WHERE kadep.username = '".$_SESSION['username']."'
+            AND absensi.tanggal IS NULL
+            AND val.[date_absen] IS NOT NULL
+            AND val_hrd.validate_date IS NULL");
+    $num_log = $sqlsrv_db->num_rows($cek_task);
+else:
+    $cek_task = $sqlsrv_db->query("SELECT COUNT(*) as total FROM (
+                                    SELECT absensi.[depo]
+                                                    ,absensi.[pin]
+                                                    ,absensi.[nik]
+                                                    ,absensi.[nama]
+                                                    ,absensi.date_absen
+                                                    ,kadep.username
+                                                    ,val.[keterangan]
+                                                    ,val.[lc_name]
+                                                FROM [db_hris].[dbo].[table_absensi_log] absensi
+                                                LEFT JOIN [db_hris].[dbo].[table_depo_absensi] kadep
+                                                ON absensi.depo = kadep.kode_depo
+                                                LEFT JOIN (SELECT
+                                                    a.*
+                                                    ,b.leave_category AS lc_name
+                                                    FROM [db_hris].[dbo].[table_absensi_validasi] a
+                                                    LEFT JOIN [db_hris].[dbo].[table_absensi_leave_category] b
+                                                    ON a.leave_category = b.id) val
+                                                    ON absensi.depo = val.depo
+                                                    AND absensi.pin = val.pin
+                                                    AND absensi.nik = val.nik
+                                                WHERE kadep.username = '".$_SESSION['username']."'
+                                                and absensi.tanggal is null
+                                                and val.lc_name is null
+                                                and DATENAME(WEEKDAY, absensi.date_absen) != 'Sunday') validasi");
+    $row = $sqlsrv_db->fetch_array($cek_task);
+    $num_log = $row['total'];
+endif;
 ?>
 <div class="main-content-inner">
     <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -17,6 +82,14 @@ $where_depo = $_SESSION['total_depo'] != 0 ? " WHERE depo in ".$_SESSION['akses_
             <h1>
                 <?php echo strtoupper(str_replace("_"," ",$_GET['act'])); ?>
             </h1>
+            <div class="pull-right">
+            <?php if($_GET['act'] == "validasi_hrd"): ?>
+                <a style="text-decoration-line: none;" href="?page=list_task&category=<?php echo $_GET['sm']; ?>_hrd&status=0">New Task: <span class="badge<?php echo $num_log > 0 ? " badge-info" : " badge-grey"; ?>"><?php echo $num_log; ?></span></a>
+            <?php else: ?>
+                <a style="text-decoration-line: none;" href="?page=list_task&category=<?php echo $_GET['sm']; ?>&status=0">New Task: <span class="badge<?php echo $num_log > 0 ? " badge-info" : " badge-grey"; ?>"><?php echo $num_log; ?></span></a>
+            <?php endif; ?>
+            </div>
+            <br>
         </div>
         <div class="row">
             <div class="col-sm-6">
@@ -356,7 +429,6 @@ $where_depo = $_SESSION['total_depo'] != 0 ? " WHERE depo in ".$_SESSION['akses_
     }
 
     function save() {
-        $('#modal_validasi').modal('show');
         var queue = $('#progress1');
         var act = "save_validasi";
         var pin = $('#modal_validasi #pin').val();
@@ -386,6 +458,7 @@ $where_depo = $_SESSION['total_depo'] != 0 ? " WHERE depo in ".$_SESSION['akses_
                     upload_image(depo,nik,tanggal);
                 } else {
                     alert(data);
+                    $('#modal_validasi').modal('hide');
                     // location.reload();
                     queue.hide();
                     view();

@@ -75,6 +75,7 @@ while ($row = $sqlsrv_hris->fetch_array($result)) {
     $stmt_verified = $sqlsrv_hris->query($sql_verified);
     $num_verified = $sqlsrv_hris->num_rows($stmt_verified);
     $verified = $num_verified > 0 ? 'verified' : 'pending';
+    // echo $sql_verified;
 
     $btn = '';
     if ($row['status'] == "disetujui" && $num_verified == 0):

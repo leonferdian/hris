@@ -1,6 +1,20 @@
-<?php $sqlsrv_hris = DB::connection('sqlsrv_hris'); ?>
-<?php $where_depo = $_SESSION['total_depo'] != 0 ? " WHERE depo in ".$_SESSION['akses_depo']."" : ""; ?>
-<?php
+<?php 
+include ('../../../lib/database.php');
+require "../../../lib/fungsi_rupiah.php";
+
+$sqlsrv_hris = DB::connection('sqlsrv_hris');
+
+set_time_limit(0);
+session_start();
+
+$sql_user = "SELECT a.pin, b.email_atasan 
+            FROM [db_hris].[dbo].[table_karyawan] a
+            LEFT JOIN [db_hris].[dbo].[table_email_atasan] b
+            ON a.[email] = b.[email_user]
+            WHERE a.[nik] = '".$_SESSION['nik']."'";
+$stmt_user = $sqlsrv_hris->query($sql_user);
+$row_user = $sqlsrv_hris->fetch_array($stmt_user);
+
 if($_GET['act'] == "edit" || $_GET['act'] == "detail"):
 $sql = "SELECT [id]
             ,[depo]
@@ -28,7 +42,7 @@ echo '<input type="hidden" id="id_cuti" value="">';
 endif;
 ?>
 <div class="main-content-inner">
-    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+    <div class="breadcrumbs ace-save-state hide" id="breadcrumbs">
         <ul class="breadcrumb">
             <li>
                 <i class="ace-icon fa fa-home home-icon"></i>
@@ -44,9 +58,9 @@ endif;
             </h1>
         </div>
         <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-12">
                 <div class="widget-box">
-                    <div class="widget-header">
+                    <div class="widget-header hide">
                         <h4 class="widget-title"></h4>
                         <span class="widget-toolbar">
                             <a href="#" data-action="collapse">
@@ -62,7 +76,8 @@ endif;
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label no-padding-top"> Depo </label>
                                         <div class="col-sm-7">
-                                            <select class="form-control input-sm select2" name="slc_depo" id="slc_depo" data-placeholder="Select Depo" onchange="select_emp()" <?php echo $_GET['act'] == "detail" ? "disabled" : ""; ?>>
+                                            <input type="text" id="depo" class="form-control input-sm" value="<?php echo $_SESSION['depo']; ?>" readonly>
+                                            <!-- <select class="form-control input-sm select2" name="slc_depo" id="slc_depo" data-placeholder="Select Depo" onchange="select_emp()" <?php echo $_GET['act'] == "detail" ? "disabled" : ""; ?>>
                                                 <option value=""></option>
                                                 <?php
                                                 $sql = "SELECT * FROM
@@ -79,13 +94,14 @@ endif;
                                                 endwhile;
                                                 ?>
                                                 <option value="Blank">Unknow</option>
-                                            </select>
+                                            </select> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label no-padding-top"> Nama Karyawan </label>
                                         <div class="col-sm-7">
-                                            <select class="form-control input-sm select2" name="slc_nama_karyawan" id="slc_nama_karyawan" data-placeholder="Select Person" onchange="" <?php echo $_GET['act'] == "detail" ? "disabled" : ""; ?>>
+                                            <input type="text" id="nama_karyawan" class="form-control input-sm" value="<?php echo $_SESSION['nama']; ?>" readonly>
+                                            <!-- <select class="form-control input-sm select2" name="slc_nama_karyawan" id="slc_nama_karyawan" data-placeholder="Select Person" onchange="" <?php echo $_GET['act'] == "detail" ? "disabled" : ""; ?>>
                                                 <?php
                                                 if ($_GET['act'] == "edit" || $_GET['act'] == "detail"):
                                                 $sql = "SELECT * FROM (SELECT a.[pin]
@@ -113,11 +129,19 @@ endif;
                                                 endwhile;
                                                 endif;
                                                 ?>
-                                            </select>
+                                            </select> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label no-padding-top"> Keterangan </label>
+                                        <label class="col-sm-3 control-label no-padding-top"> NIK </label>
+                                        <div class="col-sm-7">
+                                            <input type="text" id="nik" class="form-control input-sm" value="<?php echo $_SESSION['nik']; ?>" readonly>
+                                            <input type="hidden" id="pin" value="<?php echo $row_user['pin']; ?>">
+                                            <input type="hidden" id="email_atasan" value="<?php echo $row_user['email_atasan']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-top"> Keterangan Cuti </label>
                                         <div class="col-sm-7">
                                             <textarea class="form-control" id="keterangan" placeholder="Default Text" <?php echo $_GET['act'] == "detail" ? "disabled" : ""; ?>><?php echo $_GET['act'] == "edit" || $_GET['act'] == "detail" ? $row_data['keterangan'] : ""; ?></textarea>
                                         </div>
@@ -131,24 +155,21 @@ endif;
                                                         <i class="fa fa-calendar bigger-110"></i>
                                                     </span>
                                                     <input class="form-control" type="text" name="date-range-picker" id="date_range" class="col-xs-12 col-sm-4" <?php echo $_GET['act'] == "detail" ? "disabled" : ""; ?> />
-                                                    <input type="hidden" id="startDate" value="<?php echo $_GET['act'] == "edit" || $_GET['act'] == "detail" ? date_format($row_data['date_start'], "Y-m-d") : ""; ?>">
-                                                    <input type="hidden" id="endDate" value="<?php echo $_GET['act'] == "edit" || $_GET['act'] == "detail" ? date_format($row_data['date_end'], "Y-m-d") : ""; ?>">
+                                                    <input type="hidden" id="startDate" value="<?php echo $_GET['act'] == "edit" || $_GET['act'] == "detail" ? date_format($row_data['date_start'], "Y-m-d") : $_GET['tanggal']; ?>">
+                                                    <input type="hidden" id="endDate" value="<?php echo $_GET['act'] == "edit" || $_GET['act'] == "detail" ? date_format($row_data['date_end'], "Y-m-d") : $_GET['tanggal']; ?>">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <?php if ($_GET['act'] != "detail"): ?>
                                         <label class="col-sm-3 control-label no-padding-top">
-                                            <span id="progress1" style="display:none"><img src="images/loading.gif" width="20" /> Please Wait...</span>
                                         </label>
                                         <div class="col-sm-7">
-                                            <button class="btn btn-sm btn-success" onclick="save()">
-                                                <i class="ace-icon fa fa-check"></i>
-                                                Save
-                                            </button>
+											<button id="loading-btn" type="button" class="btn btn-xs btn-primary" onclick="save()" >Save</button>
+                                            <?php if ($_GET['act'] == "edit"): ?>
+											    <button id="loading-btn" type="button" class="btn btn-xs btn-danger" onclick="del_event('<?php echo $row_data['id']; ?>')">Delete</button>
+                                            <?php endif; ?>
                                         </div>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div><!-- /.col -->
@@ -181,20 +202,20 @@ endif;
         const d = new Date();
         var year = d.getFullYear();
         var month = d.getMonth();
-        var startDay = new Date(year, 0, 1);
-        var endDay = new Date(year, month + 1, 0);
-        var now = d.getDate();
+        // var startDay = new Date(year, 0, 1);
+        // var endDay = new Date(year, month + 1, 0);
+        // var now = d.getDate();
 
-        if ($('#id_cuti').val() != "") {
+        // if ($('#id_cuti').val() > 0) {
             startDay = $('#startDate').val();
             endDay = $('#endDate').val();
-        }
+        // }
 
         $('input[name=date-range-picker]').daterangepicker({
             'applyClass': 'btn-sm btn-success',
             'cancelClass': 'btn-sm btn-default',
-            startDate: now,
-            endDate: now,
+            startDate: startDay,
+            endDate: endDay,
             locale: {
                 applyLabel: 'Apply',
                 cancelLabel: 'Cancel',
@@ -205,47 +226,6 @@ endif;
             $(this).next().focus();
         });
     });
-
-    function save() {
-        var queue = $('#progress1');
-        var act = "save";
-        var id = $('#id_cuti').val();
-        var depo = $('#slc_depo').val();
-        var nama_karyawan = $('#slc_nama_karyawan').val();
-        var pin = $('#slc_nama_karyawan option:selected').data('pin');
-        var nik = $('#slc_nama_karyawan option:selected').data('nik');
-        var keterangan = $('#keterangan').val();
-        var tgl_range = $("#date_range").val().split(' - ');
-		var tgl1 = tgl_range[0];
-		var tgl2 = tgl_range[1];
-        queue.show();
-        $.ajax({
-            type: "POST",
-            url: "inc/cuti/pengajuan_cuti/proc.php",
-            traditional: true,
-            data: {
-                act: act,
-                id: id,
-                depo: depo,
-                nama_karyawan: nama_karyawan,
-                pin: pin,
-                nik: nik,
-                tgl1: tgl1,
-                tgl2: tgl2,
-                keterangan: keterangan
-            },
-            success: function (data) {
-                alert(data);
-                if (data.trim() == "Data Saved") {
-                    location.href="?sm=pengajuan_cuti";
-                }
-                queue.hide();
-            },
-            error: function (msg) {
-                alert(msg);
-            }
-        });
-    }
 
     function select_emp() {
         var act = "select_emp";

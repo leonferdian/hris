@@ -94,6 +94,7 @@
 			$_SESSION['nama'] = $row_user['nama'];
 			$_SESSION['id_user'] = $row_user['id_user'];
 			$_SESSION['username'] = $row_user['username'];
+			$_SESSION['nik'] = $row_user['nik'];
 			$_SESSION['divisi'] = $row_user['divisi'];
 			$_SESSION['user_level'] = $row_user['user_level'];
 			$_SESSION['user_foto'] = $row_user['user_foto'];

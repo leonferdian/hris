@@ -85,9 +85,40 @@ use Intervention\Image\ImageManagerStatic as Image;
 			,'".$_SESSION['id_user']."'
 			,'centralinput'
 			,getdate()
-			)";
+			); SELECT SCOPE_IDENTITY() AS inserted_id;";
     $stmt = $sqlsrv_hris->query($sql);
+    sqlsrv_next_result($stmt);
+    sqlsrv_fetch($stmt);
+    $inserted_id = sqlsrv_get_field($stmt, 0);
 	if ($stmt) {
+        $sql_log = "INSERT INTO [db_hris].[dbo].[table_log_activity]
+                    (
+                    [tanggal]
+                    ,[category]
+                    ,[depo]
+                    ,[note]
+                    ,[status]
+                    ,[date_create]
+                    ,[create_by]
+                    ,[date_update]
+                    ,[update_by]
+                    )
+                    VALUES
+                    (
+                    '".$_POST['tanggal']."'
+                    ,'validasi_absensi'
+                    ,'".$_POST['depo']."'
+                    ,'".$_POST['keterangan']."'
+                    ,'0'
+                    ,getdate()
+                    ,'".$_SESSION['id_user']."'
+                    ,getdate()
+                    ,'".$_SESSION['id_user']."'
+                    )";
+        $stmt_log = $sqlsrv_hris->query($sql_log);
+        if (!$stmt_log):
+            echo "{'Error: $sql_log'}";
+        endif;
 		echo "Data Saved";
 	} else {
 		echo "Error: `".$sql."`";
@@ -118,11 +149,39 @@ use Intervention\Image\ImageManagerStatic as Image;
                     ,'" . trim($validasi). "'
                     ,'" . trim($_SESSION['nama']) . "'
                     ,getdate()
-                )";
+                );";
 
         $stmt = $sqlsrv_hris->query($sql);
 
         if ($stmt) {
+            $sql_log = "INSERT INTO [db_hris].[dbo].[table_log_activity]
+                    (
+                    [tanggal]
+                    ,[category]
+                    ,[depo]
+                    ,[note]
+                    ,[status]
+                    ,[date_create]
+                    ,[create_by]
+                    ,[date_update]
+                    ,[update_by]
+                    )
+                    VALUES
+                    (
+                    '".$_POST['tanggal']."'
+                    ,'validasi_hrd'
+                    ,'".$_POST['depo']."'
+                    ,'".trim($validasi)."'
+                    ,'0'
+                    ,getdate()
+                    ,'".$_SESSION['id_user']."'
+                    ,getdate()
+                    ,'".$_SESSION['id_user']."'
+                    )";
+            $stmt_log = $sqlsrv_hris->query($sql_log);
+            if (!$stmt_log):
+                echo "{'Error: $sql_log'}";
+            endif;
             echo "Data saved";
         } else {
             echo "error: `".$sql."`";
@@ -133,7 +192,7 @@ use Intervention\Image\ImageManagerStatic as Image;
                 ,nama_validator = '" . trim($_SESSION['nama']) . "'
                 ,validate_date = getdate()
                 where depo = '" . $_POST['depo'] . "' and date_absen = '" . $_POST['tanggal'] . "'  and nik = '" . $_POST['nik'] . "'";
-        
+
         $stmt = $sqlsrv_hris->query($sql);
 
         if ($stmt) {

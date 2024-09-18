@@ -8,6 +8,8 @@ $filter = "";
 $filter .= isset($_GET['divisi']) && $_GET['divisi'] != "" ? " and divisi = '".$_GET['divisi']."'" : "";
 $filter .= isset($_GET['tahun']) && $_GET['tahun'] != "" ? " and tahun = '".$_GET['tahun']."'" : "";
 $filter .= " and b.[nama_karyawan] is not null";
+$filter .= " and b.[nama_karyawan] is not null";
+$filter .= " AND a.[create_by] = '".$_SESSION['nama']."'";
 $group_by = " GROUP BY a.[kode_penilaian]
                 ,a.[nama]
                 ,a.[divisi]
@@ -123,7 +125,7 @@ $order_by = " ORDER BY a.[divisi],b.[nama_karyawan],a.[tahun] ASC";
                 <td style="vertical-align:middle; text-align:center;">
                     <?php if ($row['hasil'] != 'complete'): ?>
                     <a href="?sm=jawaban_penilaian&act=edit_dialog<?php echo "&kode_penilaian=".$row['kode_penilaian']."&nik=".$row['nik']; ?>" class="btn btn-xs btn-info" >
-                        <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+                        <i class="ace-icon fa fa-pencil bigger-120"></i> Isi Penilaian
                     </a>
                     <?php endif; ?>
                 </td>

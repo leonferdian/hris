@@ -5,13 +5,6 @@ set_time_limit(0);
 session_start();
 $sqlsrv_hris = DB::connection('sqlsrv_hris');
 if($_POST['act'] == "save"):
-	$query_row_user = DB::connection('mysql_hris')->query("SELECT username FROM user WHERE nik='".$_POST['nik']."'");
-	$row_user = $query_row_user->fetch_array();
-
-	$select_atasan = "SELECT [email_user] ,[email_atasan] FROM [db_hris].[dbo].[table_email_atasan] WHERE [email_user] = '".$row_user['username']."'";
-	$result = $sqlsrv_hris->query($select_atasan);
-	$row_atasan = $sqlsrv_hris->fetch_array($result);
-
 	$sql = "INSERT INTO [db_hris].[dbo].[table_request_cuti]
 			(
 				[depo]
@@ -38,7 +31,7 @@ if($_POST['act'] == "save"):
 			,'".date("Y-m-d", strtotime($_POST['tgl1']))."'
 			,'".date("Y-m-d", strtotime($_POST['tgl2']))."'
 			,0
-			,'".$row_atasan['email_atasan']."'
+			,'".$_POST['email_atasan']."'
 			,getdate()
 			,'".$_SESSION['nama']."'
 			,getdate()
@@ -64,6 +57,14 @@ if($_POST['act'] == "save"):
 	} else {
 		echo "Error: ".$sql;
 	}
+elseif($_POST['act'] == "delete"):
+	$sql = "DELETE FROM [db_hris].[dbo].[table_request_cuti] WHERE id = '".$_POST['id']."'";
+	$stmt = $sqlsrv_hris->query($sql);
+	if (!$stmt):
+		echo "Error: $sql";
+	else:
+		echo "Data Saved";
+	endif;
 elseif($_POST['act'] == "select_emp"):
 	$sql = "SELECT * FROM (SELECT a.[pin]
             ,a.[nik]

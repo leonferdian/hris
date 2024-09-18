@@ -133,7 +133,7 @@
                 traditional: true,
                 data:{
                     act: 'del',
-                    kode_soal : id
+                    kode_penilaian : id
                 },
         		success:function(data){
                     alert(data);

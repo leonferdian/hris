@@ -60,7 +60,7 @@ else:
                                         <td><?php echo $row['depo'];?></td>
                                         <td><?php echo $row['nama'];?></td>
                                         <td><?php echo $row['pin'];?></td>
-                                        <td><?php echo $row['nik'];?></td>
+                                        <td><a href="?mm=data_karyawan&detail_page=form_karyawan&act=detail_karyawan&id=<?php echo $row['id'];?>"><?php echo $row['nik'];?></a></td>
                                         <td><?php echo $row['kategori_karyawan'];?></td>
                                         <td><?php echo $row['nama_outsourcing'];?></td>
                                         <td><?php echo $row['status_kontrak_kerja'];?></td>
@@ -69,9 +69,6 @@ else:
                                             <div class="btn-group">
                                                 <a class="btn btn-xs btn-white btn-info" href="?mm=data_karyawan&detail_page=form_karyawan&act=edit_karyawan&id=<?php echo $row['id'];?>">
                                                     Edit
-                                                </a>
-                                                <a class="btn btn-xs btn-white btn-warning" href="?mm=data_karyawan&detail_page=form_karyawan&act=detail_karyawan&id=<?php echo $row['id'];?>">
-                                                    Detail
                                                 </a>
                                             </div>
                                         </td>

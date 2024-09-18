@@ -2,6 +2,9 @@
 $sqlsrv_db = DB::connection('sqlsrv_hris');
 $month = array("jan" => "01", "feb" => "02", "mar" => "03", "apr" => "04", "may" => "05", "jun" => "06", "jul" => "07", "aug" => "08", "sep" => "09", "oct" => "10", "nov" => "11", "dec" => "12");
 $where_depo = $_SESSION['total_depo'] != 0 ? " WHERE depo in ".$_SESSION['akses_depo']."" : "";
+
+$cek_task = $sqlsrv_db->query("SELECT * FROM [db_hris].[dbo].[table_log_activity] WHERE [category] = '".$_GET['sm']."' AND [status] = 0");
+$num_log = $sqlsrv_db->num_rows($cek_task);
 ?>
 <style>
     .multiselect {
@@ -198,6 +201,10 @@ $where_depo = $_SESSION['total_depo'] != 0 ? " WHERE depo in ".$_SESSION['akses_
             <h1>
                 Absensi Checkin Checkout
             </h1>
+            <div class="pull-right hide">
+                <a style="text-decoration-line: none;" href="?page=log_task&category=absensi&status=0">New Task: <span class="badge<?php echo $num_log > 0 ? " badge-info" : " badge-grey"; ?>"><?php echo $num_log; ?></span></a>
+            </div>
+            <br>
         </div>
         <div class="row">
             <div class="col-sm-6">

@@ -7,6 +7,7 @@ session_start();
 $filter = "";
 $filter .= isset($_GET['divisi']) && $_GET['divisi'] != "" ? " and divisi = '".$_GET['divisi']."'" : "";
 $filter .= isset($_GET['tahun']) && $_GET['tahun'] != "" ? " and tahun = '".$_GET['tahun']."'" : "";
+$filter .= " AND [create_by] = '".$_SESSION['nama']."'";
 $group_by = " GROUP BY [kode_penilaian],[nama],[divisi],[tahun]";
 $order_by = " ORDER BY [divisi] ASC";
 ?>

@@ -62,6 +62,12 @@ $order_by = " ORDER BY a.[divisi],b.[nama_karyawan],a.[tahun] ASC";
         });	
     });
 </script>
+<div class="pull-right">
+    <a type="button" class="btn btn-purple btn-sm" href="?sm=hasil_penilaian&act=report_team&divisi=<?php echo $_GET['divisi']; ?>">
+        <i class="ace-icon fa fa-book bigger-110"></i>Report Team
+    </a>
+</div>
+<br><br>
 <table width="100%" class="table table-striped table-bordered table-hover" id="data_master">
     <thead>
         <tr>
@@ -74,7 +80,8 @@ $order_by = " ORDER BY a.[divisi],b.[nama_karyawan],a.[tahun] ASC";
             <th style="vertical-align:middle; text-align:center;">NIK</th>
             <th style="vertical-align:middle; text-align:center;">Jabatan</th>
             <th style="vertical-align:middle; text-align:center;">Masa Kerja</th>
-            <th style="vertical-align:middle; text-align:center;">Total Score</th>
+            <th style="vertical-align:middle; text-align:center;">Total Score dr Karyawan</th>
+            <th style="vertical-align:middle; text-align:center;">Total Score dr Atasan</th>
             <th style="vertical-align:middle; text-align:center;">Validasi Atasan</th>
             <th style="vertical-align:middle; text-align:center; width:100px;">Act</th>
         </tr>
@@ -83,6 +90,7 @@ $order_by = " ORDER BY a.[divisi],b.[nama_karyawan],a.[tahun] ASC";
         <?php
         $sql = "SELECT 
 		        SUM(b.[score]) as total_score
+		        ,SUM(b.[score_atasan]) as total_score_atasan
                 ,a.[kode_penilaian]
                 ,a.[nama]
                 ,a.[divisi]
@@ -142,18 +150,24 @@ $order_by = " ORDER BY a.[divisi],b.[nama_karyawan],a.[tahun] ASC";
                     <?php echo format_rupiah($row['total_score']); ?>
                 </td>
                 <td style="vertical-align:middle; text-align:center;">
-                    <?php echo isset($row['hasil']) && $row['hasil'] == 'complete' ? '<i class="ace-icon fa fa-check-circle bigger-120 blue"> Verified</i>' : '<i class="ace-icon fa fa-clock-o bigger-120 blue"> In Review</i>'; ?>
+                    <?php echo format_rupiah($row['total_score_atasan']); ?>
                 </td>
                 <td style="vertical-align:middle; text-align:center;">
+                    <?php echo isset($row['hasil']) && $row['hasil'] == 'complete' ? '<i class="ace-icon fa fa-check-circle bigger-120 blue"> Verified</i>' : '<i class="ace-icon fa fa-clock-o bigger-120 blue"> In Review</i>'; ?>
+                </td>
+                <td style="vertical-align:middle; text-align:center; width: 180px;">
                     <?php if (isset($row['arsip']) && $row['arsip'] == '1'): ?>
                         <i class="ace-icon fa fa-check bigger-120 text-success"> Diarsipkan</i>
                     <?php else: ?>
                         <?php if ($row['hasil'] == 'complete'): ?>
                         <a href="?sm=hasil_penilaian&act=edit_dialog<?php echo "&kode_penilaian=".$row['kode_penilaian']."&nik=".$row['nik']; ?>" class="btn btn-xs btn-warning" >
-                            <i class="ace-icon fa fa-folder-open bigger-120"> Arsipkan</i>
+                            <i class="ace-icon fa fa-folder-open bigger-120"> Arsip</i>
                         </a>
                         <?php endif; ?>
                     <?php endif; ?>
+                    <a href="?sm=hasil_penilaian&act=report<?php echo "&kode_penilaian=".$row['kode_penilaian']."&nik=".$row['nik']; ?>" class="btn btn-xs btn-info" >
+                        <i class="ace-icon fa fa-book bigger-120"> Report</i>
+                    </a>
                 </td>
             </tr>
             <?php

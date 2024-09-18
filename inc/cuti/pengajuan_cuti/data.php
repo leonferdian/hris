@@ -10,17 +10,20 @@ $draw = isset($_POST['draw']) ? intval($_POST['draw']) : 0;
 $start = isset($_POST['start']) ? intval($_POST['start']) : 0;
 $length = isset($_POST['length']) ? intval($_POST['length']) : 50;
 $searchValue = isset($_POST['search']['value']) ? $_POST['search']['value'] : '';
-$tanggal = isset($_POST['tanggal']) ? $_POST['tanggal'] : '';
-$depo = isset($_POST['depo']) ? $_POST['depo'] : '';
+// $tahun = isset($_POST['tahun']) ? $_POST['tahun'] : '';
+// $bulan = isset($_POST['bulan']) ? $_POST['bulan'] : '';
+$id = isset($_POST['id']) ? $_POST['id'] : '';
 $orderColumnIndex = isset($_POST['order'][0]['column']) ? $_POST['order'][0]['column'] : 0;
 $orderDirection = isset($_POST['order'][0]['dir']) ? $_POST['order'][0]['dir'] : 'asc';
 $orderColumn = isset($_POST['columns'][$orderColumnIndex]['data']) ? $_POST['columns'][$orderColumnIndex]['data'] : 'a.[date_create]';
 $filter = "";
-$filter .= !empty($tanggal) ? " AND [date_start] = '$tanggal'" : "";
-$filter .= !empty($depo) ? " AND [depo] = '$depo'" : "";
+// $filter .= !empty($tahun) ? " AND datepart(year,[date_start]) = '$tahun'" : "";
+// $filter .= !empty($bulan) ? " AND datepart(month,[date_start]) = '$bulan'" : "";
+$filter .= !empty($id) ? " AND a.id = '$id'" : "";
+$filter .= " AND a.[nik] = '".$_SESSION['nik']."'";
 
 // Total number of records with filtering
-$filterQuery = "SELECT COUNT(*) AS total FROM [db_hris].[dbo].[table_request_cuti] WHERE 1=1";
+$filterQuery = "SELECT COUNT(*) AS total FROM [db_hris].[dbo].[table_request_cuti] a WHERE 1=1";
 if (!empty($searchValue)) {
     $filterQuery .= " AND (a.[nama_karyawan] LIKE '%$searchValue%' OR a.[depo] LIKE '%$searchValue%')";
 }

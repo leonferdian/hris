@@ -69,7 +69,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h2 class="modal-title font-weight-bold">Form Pengajuan</h2>
+                <h2 class="modal-title font-weight-bold">Biodata Pelamar</h2>
             </div>
             <div class="modal-body">
             </div>
@@ -90,7 +90,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h2 class="modal-title font-weight-bold">Form Pengajuan</h2>
+                <h2 class="modal-title font-weight-bold">Biodata Pelamar</h2>
             </div>
             <div class="modal-body">
             </div>

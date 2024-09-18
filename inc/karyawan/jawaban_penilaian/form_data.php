@@ -148,7 +148,7 @@ endif;
                                                 <pre>Score Karyawan: <?php echo format_rupiah($row_detail['score']); ?> <i class="fa fa-star"></i></pre>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group hide">
                                             <label class="col-sm-2">Grade</label>
                                             <div class="col-sm-5">
                                                 <input type="text" class="form-control input-sm" name="grade[]" value="<?php echo trim($row_detail['grade_atasan']); ?>">
@@ -156,7 +156,7 @@ endif;
                                                 <pre>Grade Karyawan: <?php echo trim($row_detail['grade']); ?></pre>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group hide">
                                             <label class="col-sm-2">Nilai</label>
                                             <div class="col-sm-5">
                                                 <input type="text" class="form-control input-sm" name="nilai[]" value="<?php echo trim($row_detail['nilai_atasan']); ?>">
@@ -252,7 +252,7 @@ endif;
                 'half': false,
                 'starType' : 'i',
                 'scoreName': 'score[]',
-                'score': <?php echo $row_score['score_atasan']; ?>,
+                'score': <?php echo $row_score['score_atasan'] != "" ? $row_score['score_atasan'] : "0"; ?>,
             })
         <?php endwhile; ?>
         <?php endif; ?>

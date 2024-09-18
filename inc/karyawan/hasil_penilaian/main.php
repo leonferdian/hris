@@ -4,6 +4,10 @@
     <?php include 'inc/karyawan/hasil_penilaian/form_data.php'; ?>
 <?php elseif (isset($_GET['act']) && $_GET['act'] == "detail"):  ?>
     <?php include 'inc/karyawan/hasil_penilaian/form_data.php'; ?>
+<?php elseif (isset($_GET['act']) && $_GET['act'] == "report"):  ?>
+    <?php include 'inc/karyawan/hasil_penilaian/report.php'; ?>
+<?php elseif (isset($_GET['act']) && $_GET['act'] == "report_team"):  ?>
+    <?php include 'inc/karyawan/hasil_penilaian/report_team.php'; ?>
 <?php else: ?>
 <?php $sqlsrv_hris = DB::connection('sqlsrv_hris'); ?>
 <div class="main-content-inner">

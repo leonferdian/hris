@@ -20,7 +20,7 @@ class DB
                 $connection = new Connection($cred);
                 break;
             case "mysql":
-                $connection = mysqli_connect($host . ":" . $port, $username, $password, $database);
+                $connection = mysqli_connect($host, $username, $password, $database, $port);
                 break;
         }
 
